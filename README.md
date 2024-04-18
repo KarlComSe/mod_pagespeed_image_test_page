@@ -6,4 +6,4 @@ Images are from Pexels.
 Sample pagespeed.conf (for Apache) is included in the repository.
 
 ## Example
-[![Screenshot](screenshot.png)]
+![Screenshot](screenshot.png)
