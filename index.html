@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image tests with page speed</title>
+    <style>
+        body {
+            max-width: 1450px;
+            margin: 0 auto;
+        }
+
+        main {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        img {
+            max-width: 100%;
+            width: 700px;
+            display: block;
+        }
+
+        figcaption {
+            font-size: 1.5em;
+        }
+    </style>
+    <script>
+        let performance = [];
+
+        const observer = new PerformanceObserver((list) => {
+            list.getEntries().forEach((entry) => {
+                console.log(entry);
+                performance[entry.name] = entry.encodedBodySize
+            });
+        });
+
+        observer.observe({ type: "resource", buffered: true });
+    </script>
+</head>
+
+<body>
+    <main>
+        <picture>
+            <img src="pexels-pixabay-55814.jpg" id="image1" alt="Image 1" width="700px">
+            <figcaption>
+                <p>Image 1.</p>
+                <p><span>Original: 1920x1280. 223.6 kb.</span></p>
+                <p><span id="sizes1"></span></p>
+            </figcaption>
+        </picture>
+        <picture>
+            <img src="pexels-pixabay-302304.jpg" id="image2" alt="Image 2">
+            <figcaption>
+                <p>Image 2. No explicit widht set in img tag.</p>
+                <p><span>Original:6000x4000. 1.8 mb.</span></p>
+                <p><span id="sizes2"></span> </p>
+            </figcaption>
+        </picture>
+        <picture>
+            <img src="pexels-fidel-2814828.jpg" id="image3" alt="Image 3" width="700px">
+            <figcaption>
+                <p>Image 3.</p>
+                <p><span>Original: 5000 x 3333. 1.3 mb.</span></p>
+                <p><span id="sizes3"></span></p>
+            </figcaption>
+        </picture>
+        <picture>
+            <img src="pexels-pixabay-433308.jpg" id="image4" alt="Image 4" width="700px">
+            <figcaption>
+                <p>Image 4.</p>
+                <p><span>Original 4642 x 3095. 1.0 mb.</span></p>
+                <p><span id="sizes4"></span></p>
+            </figcaption>
+        </picture>
+        <picture>
+            <img src="pexels-joshuaworoniecki-20857331.jpg" id="image5" alt="Image 5" width="700px">
+            <figcaption>
+                <p>Image 5.</p>
+                <p><span>Original:1280 x 854. 75.7 kb.</span></p>
+                <p><span id="sizes5"></span></p>
+            </figcaption>
+        </picture>
+
+    </main>
+    <script>
+
+
+        const image1 = document.getElementById('image1');
+        const image2 = document.getElementById('image2');
+        const image3 = document.getElementById('image3');
+        const image4 = document.getElementById('image4');
+        const image5 = document.getElementById('image5');
+
+        const imgUrls = {
+            "sizes1": window.location.origin + "/mod_pagespeed_image_test_page/" + image1.getAttribute('src'),
+            "sizes2": window.location.origin + "/mod_pagespeed_image_test_page/" + image2.getAttribute('src'),
+            "sizes3": window.location.origin + "/mod_pagespeed_image_test_page/" + image3.getAttribute('src'),
+            "sizes4": window.location.origin + "/mod_pagespeed_image_test_page/" + image4.getAttribute('src'),
+            "sizes5": window.location.origin + "/mod_pagespeed_image_test_page/" + image5.getAttribute('src')
+        };
+
+        const imgUrls2 = {
+            [window.location.origin + image1.getAttribute('src')]: [],
+            [window.location.origin + image2.getAttribute('src')]: [],
+            [window.location.origin + image3.getAttribute('src')]: [],
+            [window.location.origin + image4.getAttribute('src')]: [],
+            [window.location.origin + image5.getAttribute('src')]: []
+        };
+
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            window.onload = () => {
+                console.log(performance);
+                console.log(imgUrls['sizes1']);
+                console.log(performance[imgUrls['sizes1']]);
+                if (imgUrls['sizes1'] in performance) {
+                    console.log(performance[imgUrls['sizes1']]);
+                } else {
+                    console.log(`The key ${imgUrls['sizes1']} does not exist in the performance object.`);
+                }
+                document.getElementById('sizes1').innerHTML = `Actual: ${image1.naturalWidth} x ${image1.naturalHeight}. ${formatBytes(performance[imgUrls['sizes1']], 0)}`;
+                document.getElementById('sizes2').innerHTML = `Actual: ${image2.naturalWidth} x ${image2.naturalHeight}. ${formatBytes(performance[imgUrls['sizes2']], 0)}`;
+                document.getElementById('sizes5').innerHTML = `Actual: ${image5.naturalWidth} x ${image5.naturalHeight}. ${formatBytes(performance[imgUrls['sizes5']], 0)}`;
+                document.getElementById('sizes3').innerHTML = `Actual: ${image3.naturalWidth} x ${image3.naturalHeight}. ${formatBytes(performance[imgUrls['sizes3']], 0)}`;
+                document.getElementById('sizes4').innerHTML = `Actual: ${image4.naturalWidth} x ${image4.naturalHeight}. ${formatBytes(performance[imgUrls['sizes4']], 0)}`;
+            };
+        });
+
+        /**
+        https://gist.github.com/zentala/1e6f72438796d74531803cc3833c039c
+        */
+        function formatBytes(bytes,decimals) {
+            if(bytes == 0) return '0 Bytes';
+            var k = 1024,
+                dm = decimals || 2,
+                sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+                i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+         }
+    </script>
+</body>
+
+</html>
